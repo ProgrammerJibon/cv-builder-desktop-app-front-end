@@ -458,7 +458,7 @@ const ResumeBuilder = () => {
                                     className="hidden"
                                 />
                                 <img
-                                    src={`./assets/PBLVi-(${num - 1}).jpg`}
+                                    src={`./assets/PBLVi(${num - 1}).jpg`}
                                     alt={`Design ${num}`}
                                     className="w-full  object-cover rounded-md border border-gray-100 shadow-xl"
                                 />
