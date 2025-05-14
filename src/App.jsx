@@ -5,7 +5,7 @@ import { CgClose } from 'react-icons/cg';
 import { BiDownload } from 'react-icons/bi';
 import { FaFilePdf } from "react-icons/fa6";
 import { Preview, print } from 'react-html2pdf';
-import { Design1HTML, Design2HTML, Design3HTML, Design4HTML, Design5HTML } from "./CVCompileToHTML"
+import { Design1HTML, Design2HTML, Design3HTML, Design4HTML, Design5HTML, GenerateLatex } from "./CVCompileToHTML"
 
 
 
@@ -55,6 +55,8 @@ const ResumeBuilder = () => {
             setPrevHTML(Design4HTML(resume));
         } else if (selectedDesign == "design5") {
             setPrevHTML(Design5HTML(resume));
+        } else if (selectedDesign == "design6") {
+            setPrevHTML("Code: <pre>" + GenerateLatex(resume) + "</pre>");
         } else {
             console.log("end design");
         }
@@ -65,6 +67,35 @@ const ResumeBuilder = () => {
 
     return (
         <div className='bg-gray-100 p-8'>
+            {/* resume preview */}
+            {prevHTML != "" && <div className='bg-black/50 fixed top-0 bottom-0 left-0 right-0 p-8 overflow-y-auto'>
+                <div className='bg-white w-[8.27in] mx-auto rounded-sm overflow-hidden'>
+                    <Preview id="prevHTML">
+                        <div>{parse(prevHTML)}</div>
+                    </Preview>
+                </div>
+                <div className='fixed right-16 top-16 '>
+                    <div
+                        onClick={() => {
+                            setPrevHTML("");
+                        }}
+                        className='cursor-pointer font-bold text-3xl text-red-700 border border-red-300 rounded-full p-2 bg-green-100 hover:bg-red-200'>
+                        <span>
+                            <CgClose />
+                        </span>
+                    </div>
+                    <div
+                        onClick={() => {
+                            print(`Resume of  ${name} by Jibon Desktop Resume Builder ${selectedDesign}`, 'prevHTML')
+                        }}
+                        className='mt-3 cursor-pointer font-bold text-3xl text-green-700 border border-green-300 rounded-full p-2 bg-green-100 hover:bg-green-200'>
+                        <span>
+                            <FaFilePdf />
+                        </span>
+                    </div>
+                </div>
+            </div>}
+            
             <div className="max-w-4xl mx-auto p-6 min-h-screen  bg-white shadow-lg rounded-lg">
                 <h1 className="text-3xl font-bold text-center mb-6 text-blue-600">Resume Builder Desktop App - Jibon</h1>
                 <form onSubmit={handleSubmit}>
@@ -447,7 +478,7 @@ const ResumeBuilder = () => {
 
                     <h2 className="text-2xl font-semibold text-gray-800 mb-4">Select Resume Design:</h2>
                     <div className="grid grid-cols-3 gap-4 mb-8">
-                        {[1, 2, 3, 4, 5].map((num) => (
+                        {[1, 2, 3, 4, 5, 6].map((num) => (
                             <label key={num} className={`cursor-pointer border-4 rounded-md ${selectedDesign === `design${num}` ? 'border-blue-500' : 'border-transparent'} hover:border-blue-300 transition`}>
                                 <input
                                     type="radio"
@@ -485,34 +516,7 @@ const ResumeBuilder = () => {
 
 
 
-            {/* resume preview */}
-            {prevHTML != "" && <div className='bg-black/50 fixed top-0 bottom-0 left-0 right-0 p-8 overflow-y-auto'>
-                <div className='bg-white w-[8.27in] mx-auto rounded-sm overflow-hidden'>
-                    <Preview id="prevHTML">
-                        <div>{parse(prevHTML)}</div>
-                    </Preview>
-                </div>
-                <div className='fixed right-16 top-16 '>
-                    <div
-                        onClick={() => {
-                            setPrevHTML("");
-                        }}
-                        className='cursor-pointer font-bold text-3xl text-red-700 border border-red-300 rounded-full p-2 bg-green-100 hover:bg-red-200'>
-                        <span>
-                            <CgClose />
-                        </span>
-                    </div>
-                    <div
-                        onClick={() => {
-                            print(`Resume of  ${name} by Jibon Desktop Resume Builder ${selectedDesign}`, 'prevHTML')
-                        }}
-                        className='mt-3 cursor-pointer font-bold text-3xl text-green-700 border border-green-300 rounded-full p-2 bg-green-100 hover:bg-green-200'>
-                        <span>
-                            <FaFilePdf />
-                        </span>
-                    </div>
-                </div>
-            </div>}
+
         </div>
     );
 };

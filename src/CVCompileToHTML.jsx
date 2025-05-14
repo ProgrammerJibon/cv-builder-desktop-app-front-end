@@ -331,6 +331,7 @@ export function Design3HTML({
 
 
 
+
 export function Design4HTML({
     name,
     address,
@@ -534,6 +535,91 @@ export function Design5HTML({
     html += `</div>`;
     return html;
 }
+
+
+
+// generateLatex.js
+export const GenerateLatex = ({
+    name,
+    address,
+    email,
+    link,
+    summary,
+    skills,
+    experience,
+    education,
+    certifications,
+    involvement,
+    awards,
+    references,
+}) => {
+    let result = `\\documentclass[12pt]{article}\n` +
+        `\\usepackage[margin=0.5in]{geometry}\n` +
+        `\\usepackage{hyperref}\n` +
+        `\\usepackage{enumitem}\n` +
+        `\\usepackage{xcolor}\n` +
+        `\\begin{document}\n\n` +
+
+        `\\textbf{${name}}\\\\\n` +
+        `${address} | ${email} | ${link}\\\\\n\n` +
+
+        `\\textbf{SUMMARY}\\\\\n` +
+        `${summary}\\\\\n\n` +
+
+        `\\textbf{SKILLS}\\\\\n`;
+
+    skills.forEach((s) => {
+        result += `${s.sn} (${s.pl}), `;
+    });
+
+    result += `\\\\\n\n` +
+
+        `\\textbf{EXPERIENCE}\\\\\n\\begin{itemize}\n`;
+    experience.forEach((e) => {
+        result += `\\item ${e.c} \\textbar{} ${e.p} \\textbar{} ${e.sy} - ${e.ey}\n`;
+    });
+
+    result += `\\end{itemize}\n\n` +
+
+        `\\textbf{EDUCATION}\\\\\n\\begin{itemize}\n`;
+    education.forEach((ed) => {
+        result += `\\item ${ed.d} \\textbar{} ${ed.i} \\textbar{} ${ed.sy} - ${ed.ey}\n`;
+    });
+
+    result += `\\end{itemize}\n\n` +
+
+        `\\textbf{CERTIFICATIONS}\\\\\n\\begin{itemize}\n`;
+    certifications.forEach((c) => {
+        result += `\\item ${c.t} \\textbar{} ${c.a} \\textbar{} ${c.y}\n`;
+    });
+
+    result += `\\end{itemize}\n\n` +
+
+        `\\textbf{INVOLVEMENT}\\\\\n\\begin{itemize}\n`;
+    involvement.forEach((iv) => {
+        result += `\\item ${iv.o} \\textbar{} ${iv.r} \\textbar{} ${iv.d}\n`;
+    });
+
+    result += `\\end{itemize}\n\n` +
+
+        `\\textbf{WINNINGS \\& AWARDS}\\\\\n\\begin{itemize}\n`;
+    awards.forEach((a) => {
+        result += `\\item ${a.t} \\textbar{} ${a.y} \\textbar{} ${a.d}\n`;
+    });
+
+    result += `\\end{itemize}\n\n` +
+
+        `\\textbf{REFERENCES}\\\\\n\\begin{itemize}\n`;
+    references.forEach((r) => {
+        result += `\\item ${r.n} \\textbar{} ${r.p} \\textbar{} ${r.c}\n`;
+    });
+
+    result += `\\end{itemize}\n\n` +
+
+        `\\end{document}`;
+
+    return result;
+};
 
 
 
