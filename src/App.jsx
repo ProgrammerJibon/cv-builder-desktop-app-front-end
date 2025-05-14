@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaTimes } from 'react-icons/fa';
+import { FaDownload, FaTimes } from 'react-icons/fa';
 import parse from 'html-react-parser';
 import { CgClose } from 'react-icons/cg';
 import { BiDownload } from 'react-icons/bi';
@@ -56,13 +56,49 @@ const ResumeBuilder = () => {
         } else if (selectedDesign == "design5") {
             setPrevHTML(Design5HTML(resume));
         } else if (selectedDesign == "design6") {
-            setPrevHTML("Code: <pre>" + GenerateLatex(resume) + "</pre>");
+            setPrevHTML(GenerateLatex(resume));
         } else {
             console.log("end design");
         }
     };
 
 
+    const copyToClipboard = (text) => {
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(text).then(() => {
+            console.log("Copied to clipboard");
+          }).catch((err) => {
+            console.error("Failed to copy: ", err);
+          });
+        } else {
+          const textArea = document.createElement("textarea");
+          textArea.value = text;
+          textArea.style.position = "fixed";
+          textArea.style.left = "-999999px";
+          document.body.appendChild(textArea);
+          textArea.focus();
+          textArea.select();
+          try {
+            document.execCommand('copy');
+            console.log("Copied to clipboard");
+          } catch (err) {
+            console.error("Fallback copy failed", err);
+          }
+          document.body.removeChild(textArea);
+        }
+      };
+
+      const downloadThis = (filename, content) => {
+        const element = document.createElement("a");
+        const file = new Blob([content], { type: "text/plain" });
+        element.href = URL.createObjectURL(file);
+        element.download = filename;
+        document.body.appendChild(element); // Required for Firefox
+        element.click();
+        document.body.removeChild(element);
+      };
+      
+      
 
 
     return (
@@ -71,7 +107,14 @@ const ResumeBuilder = () => {
             {prevHTML != "" && <div className='bg-black/50 fixed top-0 bottom-0 left-0 right-0 p-8 overflow-y-auto'>
                 <div className='bg-white w-[8.27in] mx-auto rounded-sm overflow-hidden'>
                     <Preview id="prevHTML">
-                        <div>{parse(prevHTML)}</div>
+                        {prevHTML.startsWith("\\documentclass")?
+                            <div>
+                                <pre>
+                                    {prevHTML}
+                                </pre>
+                            </div>
+                            :<div>{parse(prevHTML)}</div>
+                        }
                     </Preview>
                 </div>
                 <div className='fixed right-16 top-16 '>
@@ -84,7 +127,7 @@ const ResumeBuilder = () => {
                             <CgClose />
                         </span>
                     </div>
-                    <div
+                    {!prevHTML.startsWith("\\documentclass") && <div
                         onClick={() => {
                             print(`Resume of  ${name} by Jibon Desktop Resume Builder ${selectedDesign}`, 'prevHTML')
                         }}
@@ -92,12 +135,21 @@ const ResumeBuilder = () => {
                         <span>
                             <FaFilePdf />
                         </span>
-                    </div>
+                    </div>}
+                    {prevHTML.startsWith("\\documentclass") && <div
+                        onClick={() => {
+                            downloadThis(`Resume_of_${name.replaceAll(" ", "_").replaceAll(".", "_")}_by_Jibon_Desktop_Resume_Builder_${selectedDesign}.tex`, prevHTML);
+                        }}
+                        className='mt-3 cursor-pointer font-bold text-3xl text-green-700 border border-green-300 rounded-full p-2 bg-green-100 hover:bg-green-200'>
+                        <span>
+                            <FaDownload />
+                        </span>
+                    </div>}
                 </div>
             </div>}
             
             <div className="max-w-4xl mx-auto p-6 min-h-screen  bg-white shadow-lg rounded-lg">
-                <h1 className="text-3xl font-bold text-center mb-6 text-blue-600">Resume Builder Desktop App - Jibon</h1>
+                <h1 className="text-3xl font-bold text-center mb-6 text-blue-600">Latex and ATS Resume Builder Desktop App</h1>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
                         <label className="block text-lg font-semibold text-gray-700">Name:</label>
@@ -478,7 +530,7 @@ const ResumeBuilder = () => {
 
                     <h2 className="text-2xl font-semibold text-gray-800 mb-4">Select Resume Design:</h2>
                     <div className="grid grid-cols-3 gap-4 mb-8">
-                        {[1, 2, 3, 4, 5, 6].map((num) => (
+                        {[6,5,4,3,2,1].map((num) => (
                             <label key={num} className={`cursor-pointer border-4 rounded-md ${selectedDesign === `design${num}` ? 'border-blue-500' : 'border-transparent'} hover:border-blue-300 transition`}>
                                 <input
                                     type="radio"
@@ -491,7 +543,7 @@ const ResumeBuilder = () => {
                                 <img
                                     src={`./assets/PBLVi(${num - 1}).jpg`}
                                     alt={`Design ${num}`}
-                                    className="w-full  object-cover rounded-md border border-gray-100 shadow-xl"
+                                    className="w-full h-full object-cover rounded-md border border-gray-100 shadow-xl"
                                 />
                             </label>
                         ))}
